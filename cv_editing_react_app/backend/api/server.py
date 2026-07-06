@@ -8,7 +8,7 @@ import os
 import sys
 from datetime import datetime, timezone
 
-from schema.data_validation import LinkedInSearchURL, JobDBSchema, Html2PdfRequest, ConnectionRequest, JobDescriptionAnalysisRequest, CoverLetterRequest, CVRequest, CVJSONRequest
+from schema.fast_api_data_validation import LinkedInSearchURL, JobDBSchema, Html2PdfRequest, ConnectionRequest, JobDescriptionAnalysisRequest, CoverLetterRequest, CVRequest, CVJSONRequest
 from services.pdf_render import html_to_pdf
 from services.ai_editing_tools import create_cover_letter, extract_job_insights, edit_cv_with_ai, generate_connection_message
 from services.database.db import add_a_job, get_all_jobs, job_to_dict, dict_to_job

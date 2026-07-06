@@ -2,8 +2,9 @@
 import json
 from typing import List, Optional, Dict, Any, Union
 
-from config.local_llm_settings import client, MODEL_NAME
+from services.llm import LLM_With_Tracking
 from services.prompt_factory import edit_cv_with_ai_prompt, extract_job_insights_prompt, create_cover_letter_prompt
+from schema.job_analysis_schema import JobInsights
 
 
 def extract_job_insights(job_description: str):
@@ -16,33 +17,21 @@ def extract_job_insights(job_description: str):
             "job_analysis_markdown": str
         }
     """
-    prompt = extract_job_insights_prompt(job_description)
+
+
+    llm_with_tracking = LLM_With_Tracking(temperature=0.2, task_name="job_analysis")
+
+    prompt = extract_job_insights_prompt(job_description,pydantic_model=JobInsights)
+    messages = [("human", prompt)]
+    output =llm_with_tracking.invoke_with_tracking(messages,pydantic_model=JobInsights)
+
+ 
+
+    if output["error"]:
+        raise Exception(output["error"])
     
-
-    response = client.chat(
-        model=MODEL_NAME,
-        messages=[{"role": "user", "content": prompt}],
-        format="json",
-        think=False,
-        options={
-            "temperature": 0.2,
-            "top_p": 0.90,
-            "repeat_penalty": 1.05,
-        },
-    )
-
-    parsed = json.loads(response["message"]["content"])
-
-    required_fields = [
-        "job_title",
-        "company_name",
-        "analysis"
-    ]
-
-    for field in required_fields:
-        if field not in parsed:
-            raise ValueError(f"Missing field: {field}")
-
+    job_insights = output["structured_output"]
+    parsed = job_insights.model_dump()
     return parsed
 
 

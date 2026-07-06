@@ -154,64 +154,34 @@ Return ONLY valid JSON.
 
     return prompt
 
-def extract_job_insights_prompt(job_description: str):
+def extract_job_insights_prompt(job_description: str, pydantic_model):
+
+    schema = pydantic_model.model_json_schema()
+
     prompt = f"""
 You are an expert AI recruiter and job description analyst.
 
-Analyze the following job description.
+Analyze the following job description and extract only the most important information needed to understand the role.
 
 STRICT OUTPUT RULES:
 - Output ONLY valid JSON.
-- Do not include explanations, pleasantries, or markdown formatting outside the JSON.
-- All outputs must be in English. If the job description is written in another language, internally translate it to English before performing the analysis.
-- For factual categories ("gatekeepers" and "high_priority_missions"), do not hallucinate. If information is missing, use "Not Specified".
-- For analytical categories ("the_essence"), infer the underlying reality of the role based on the provided description.
-- Ensure the output is valid JSON.
-- Escape all string values correctly.
-- Use "\\n" for line breaks inside string values if needed.
-- Preserve the exact JSON schema shown below.
+- Do not include explanations, comments, markdown, or any text outside the JSON.
+- All outputs must be in English.
+- If the job description is written in another language, internally translate it to English before extracting information.
+- Do not hallucinate information. If a field is not available, use "Not Specified" or an empty list where appropriate.
+- Extract only information explicitly mentioned or strongly implied by the job description.
+- Keep lists concise and focus only on the most important items.
+- Ensure the output strictly follows the JSON schema below.
 
 JOB DESCRIPTION
 ---------------
 {job_description}
 
-Return JSON with EXACTLY the following structure:
+Return a JSON object that strictly follows this JSON Schema:
 
-{{
-  "job_title": "<job title>",
-  "company_name": "<company name or 'Not Specified'>",
-  "analysis": {{
-    "gatekeepers": {{
-      "core_paradigms": [
-        "<paradigm 1>",
-        "<paradigm 2>"
-      ],
-      "programming_languages": [
-        "<language 1>",
-        "<language 2>"
-      ],
-      "infrastructure_and_tools": [
-        "<tool 1>",
-        "<tool 2>"
-      ],
-      "education_tier": "<education requirement>",
-      "languages": [
-        "<spoken language 1>"
-      ]
-    }},
-    "the_essence": {{
-      "ultimate_product_goal": "<1-2 sentences deducing the core business value of this role>",
-      "technical_bottleneck": "<1-2 sentences inferring the hardest technical challenge this person will face>",
-      "applied_vs_theoretical_divide": "<1-2 sentences analyzing how much of this role is shipping product versus research or architecture>"
-    }},
-    "high_priority_missions": {{
-      "priority_1": "<top priority>",
-      "priority_2": "<second priority>",
-      "priority_3": "<third priority>"
-    }}
-  }}
-}}
+{schema}
 """
+
     return prompt
 
 def create_cover_letter_prompt(full_cv_context: Dict[str,Any], job_analytics: Optional[Union[str, Dict[str, Any]]]):

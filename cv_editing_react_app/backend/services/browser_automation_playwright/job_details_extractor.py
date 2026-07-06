@@ -3,8 +3,7 @@ import json
 from typing import List, Optional, Dict, Any, Union
 from pydantic import ValidationError
 
-from schema.data_validation import JobAnalytics
-from config.local_llm_settings import client, MODEL_NAME
+from schema.fast_api_data_validation import JobAnalytics
 
 
 
