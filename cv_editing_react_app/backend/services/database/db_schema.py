@@ -3,6 +3,7 @@ from sqlalchemy import (
     Integer,
     Text,
     JSON,
+    Float,
     DateTime
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -44,6 +45,35 @@ class Job(Base):
 
     def __repr__(self):
         return f"Job(id={self.id}, company_name={self.company_name}, job_title={self.job_title})"
+    
+class LLM_Eval(Base):
+    __tablename__ = "llm_eval"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False
+    )
+
+    task_name: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    raw_output: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    time_taken: Mapped[float] = mapped_column(Float, nullable=False)
+
+    input_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    output_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    total_tokens: Mapped[int] = mapped_column(Integer, default=0)
+
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    def __repr__(self):
+        return f"LLM_Eval(id={self.id}, task_name={self.task_name}, time_taken={self.time_taken})"
+
+
+
     
 
 

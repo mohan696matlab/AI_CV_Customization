@@ -19,6 +19,7 @@ class CoverLetterRequest(BaseModel):
 class CVRequest(BaseModel):
     full_cv_context: Dict[str, Any]
     job_analytics: Optional[Union[str, Dict[str, Any]]] = None
+    sections: List[str] = None
 
 class CVJSONRequest(BaseModel):
     cv_json: Dict[str, Any]

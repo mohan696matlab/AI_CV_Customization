@@ -2,9 +2,9 @@ import re
 from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import Session
 try:
-    from .db_schema import Base, Job  # Relative import when called as a module
+    from .db_schema import Base, Job, LLM_Eval  # Relative import when called as a module
 except ImportError:
-    from db_schema import Base, Job   # Absolute import when run as a standalone script
+    from db_schema import Base, Job, LLM_Eval   # Absolute import when run as a standalone script
 
 
 
@@ -95,6 +95,12 @@ def dict_to_job(data: dict) -> Job:
         review=data.get("review"),
         job_keywords=data.get("job_keywords", []),
     )
+
+# LLM Evaluation functions
+def add_llm_eval(llm_eval):
+    with Session(engine) as session:
+        session.add(llm_eval)
+        session.commit()
 
 if __name__ == "__main__":
     init_db()

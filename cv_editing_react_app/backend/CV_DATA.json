@@ -34,7 +34,7 @@
       "company": "Buawei",
       "position": "Machine Learning Research Engineer",
       "start_date": "2024-03",
-      "end_date": "present",
+      "end_date": "2024-07",
       "location": "Lille, France",
       "highlights": [
         "Reduced model training time by 90% on a production visual anomaly detection system for industrial inspection - cutting iteration cycles from weeks to days - by engineering a FAISS-backed retrieval architecture deployed end-to-end with PyTorch, OpenCV, and Docker.",
@@ -78,6 +78,14 @@
       "highlights": [
         "Designed and deployed a production-grade Retrieval-Augmented Generation (RAG) system using LLaMA 3.2, LangChain, LangGraph, and Qdrant to enable context-aware querying over the Bhagavad Gita corpus, with a FastAPI backend, Dockerized deployment, and CI/CD pipelines for scalable serving.",
         "Improved retrieval relevance and response grounding by optimizing embedding strategies and tuning vector search performance for high-quality semantic retrieval."
+      ]
+    },
+    {
+      "name": "AI Job Application Automation System",
+      "url": "https://github.com/mohan696matlab/AI_CV_Customization",
+      "highlights": [
+        "Designed and built an end-to-end AI-powered job application platform using React, FastAPI, and SQLite, integrating Playwright-based LinkedIn scraping, semantic job-resume matching, and structured job intelligence extraction to automate job discovery, ranking, and analysis.",
+        "Developed a local LLM-based resume and cover letter generation system using Ollama (Qwen 3 9B), enabling dynamic CV tailoring based on job descriptions while preserving factual consistency and supporting fully privacy-preserving, open-source deployment."
       ]
     }
   ],

@@ -16,15 +16,19 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
     setForm(cvData);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (
+    e,
+    sections = ["summary", "experience", "projects", "skills"],
+  ) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const jobAnalyticsPayload = analysis ?? form?.jobDescription ?? null;
 
       if (!jobAnalyticsPayload) {
         setErrorMessage(
-          "Please provide a job description or run Job Analysis first."
+          "Please provide a job description or run Job Analysis first.",
         );
         return;
       }
@@ -32,6 +36,7 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
       const payload = {
         full_cv_context: form,
         job_analytics: jobAnalyticsPayload,
+        sections,
       };
 
       const response = await axios.post(
@@ -41,24 +46,30 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       setForm((prev) => ({
         ...prev,
-        ...(response.data.headline?.trim()
-          ? { headline: response.data.headline }
+        ...(response.data.summary !== undefined
+          ? { summary: response.data.summary }
           : {}),
-        summary: response.data.summary,
-        experience: response.data.experience,
-        projects: response.data.projects,
-        skills: response.data.skills,
+        ...(response.data.experience !== undefined
+          ? { experience: response.data.experience }
+          : {}),
+        ...(response.data.projects !== undefined
+          ? { projects: response.data.projects }
+          : {}),
+        ...(response.data.skills !== undefined
+          ? { skills: response.data.skills }
+          : {}),
       }));
+
       setErrorMessage(null);
     } catch (error) {
       console.error(error);
       setErrorMessage(
-        `An error occurred while processing your request. ${error.message}`
+        `An error occurred while processing your request. ${error.message}`,
       );
     } finally {
       setLoading(false);
@@ -358,7 +369,6 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
   return (
     <>
       <div className="container-fluid py-4">
-
         {/* Reset Button */}
         <button
           className="btn btn-outline-danger mb-4"
@@ -429,14 +439,16 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
               {/* SUMMARY */}
               <div className="accordion-item">
                 <h2 className="accordion-header">
-                  <button
-                    className="accordion-button collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#summary"
-                  >
-                    Summary
-                  </button>
+                  <div className="d-flex align-items-center">
+                    <button
+                      className="accordion-button collapsed flex-grow-1"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#summary"
+                    >
+                      Summary
+                    </button>
+                  </div>
                 </h2>
 
                 <div
@@ -444,11 +456,21 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                   className="accordion-collapse collapse"
                   data-bs-parent="#cvAccordion"
                 >
-                  <div className="accordion-body">
+                  <div className="accordion-body justify-content-between">
                     <SummarySection
                       summary={form.summary}
                       handleSummaryChange={handleSummaryChange}
                     />
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm ms-2 me-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSubmit(e, ["summary"]);
+                      }}
+                    >
+                      ✨ AI Edit Summary
+                    </button>
                   </div>
                 </div>
               </div>
@@ -512,6 +534,16 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                       onAddHighlight={addExperienceHighlight}
                       onRemoveHighlight={removeExperienceHighlight}
                     />
+                                        <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm ms-2 me-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSubmit(e, ["experience"]);
+                      }}
+                    >
+                      ✨ AI Edit Experience
+                    </button>
                   </div>
                 </div>
               </div>
@@ -544,6 +576,16 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                       onAddHighlight={addProjectHighlight}
                       onRemoveHighlight={removeProjectHighlight}
                     />
+                                                            <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm ms-2 me-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSubmit(e, ["projects"]);
+                      }}
+                    >
+                      ✨ AI Edit Projects
+                    </button>
                   </div>
                 </div>
               </div>
@@ -602,6 +644,16 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                       onAddSkill={addSkill}
                       onRemoveSkill={removeSkill}
                     />
+                                                            <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm ms-2 me-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSubmit(e, ["skills"]);
+                      }}
+                    >
+                      ✨ AI Edit Skills
+                    </button>
                   </div>
                 </div>
               </div>
@@ -615,7 +667,7 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                 <button
                   className="btn btn-primary w-100 mb-3"
                   disabled={loading}
-                  onClick={handleSubmit}
+                  onClick={() => handleSubmit(["summary", "experience", "projects", "skills"])}
                 >
                   {loading ? (
                     <>

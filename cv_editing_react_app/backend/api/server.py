@@ -116,7 +116,7 @@ def extract_job_insights_api(payload: JobDescriptionAnalysisRequest):
 # ---------- API Endpoint for CV editing ----------
 @app.post("/edit-cv")
 def edit_cv_ai_api(payload: CVRequest):   
-    result = edit_cv_with_ai(payload.full_cv_context, payload.job_analytics)
+    result = edit_cv_with_ai(payload.full_cv_context, payload.job_analytics, payload.sections)
     return result
 
 

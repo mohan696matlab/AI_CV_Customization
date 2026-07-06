@@ -1,31 +1,39 @@
 import PropTypes from "prop-types";
 
-function SummarySection({
-  summary = "",
-  handleSummaryChange,
-}) {
-return (
-  <div className="mb-4">
-    {/* Header */}
-    <div className="mb-2">
-      <h4 className="mb-0">Summary</h4>
-    </div>
+function SummarySection({ summary = "", handleSummaryChange }) {
+  return (
+    <div className="card shadow-sm">
+      <div className="card-body">
 
-    {/* Textarea */}
-    <div className="mb-3">
-      <textarea
-        className="form-control"
-        rows={5}
-        value={summary}
-        onChange={(e) => handleSummaryChange(e.target.value)}
-        placeholder="Write your summary..."
-      />
+        {/* Header */}
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h5 className="card-title mb-0">Summary</h5>
+        </div>
+
+        {/* Textarea Label */}
+        <div className="mb-2">
+          <label className="form-label fw-semibold">
+            Professional Summary
+          </label>
+        </div>
+
+        {/* Textarea */}
+        <div className="mb-2">
+          <textarea
+            className="form-control"
+            rows={6}
+            value={summary}
+            onChange={(e) => handleSummaryChange(e.target.value)}
+            placeholder="Write or generate your professional summary..."
+          />
+        </div>
+
+      </div>
     </div>
-  </div>
-);
+  );
 }
 
-export default SummarySection
+export default SummarySection;
 
 
 /* -------- PROP TYPES VALIDATION -------- */
