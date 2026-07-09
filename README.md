@@ -1,4 +1,4 @@
-# AI CV Customization & Job Automation System 
+# AI CV Customization & Job Automation System
 
 <table>
   <tr>
@@ -13,36 +13,43 @@
   </tr>
 </table>
 
-This project automates CV-based job searching and LinkedIn job interactions using:
+This repository contains a full-stack application for tailoring CVs with AI, analyzing job descriptions, generating cover letters and connection messages, and automating LinkedIn job workflows.
 
-- FastAPI backend
-- React frontend (Bootstrap for styling)
-- Playwright browser automation
-- Local LLM support via Ollama (qwen3.5)
+It currently includes:
+
+- A FastAPI backend for CV editing, PDF rendering, job analysis, and browser automation
+- A React + Vite frontend for editing resumes, reviewing job matches, and generating content
+- Playwright-based LinkedIn automation
+- Local LLM inference through Ollama (Qwen 3.5)
+- SQLite-backed storage for jobs and LLM evaluation data
 
 ---
 
 # Tech Stack
 
 ### Backend
-- FastAPI (Python) – REST API framework for backend services  
-- SQLite – Lightweight relational database  
-- Playwright – Browser automation for LinkedIn job interactions  
-- Pydantic – Data validation and schema management  
+
+- FastAPI (Python) – API layer and request handling
+- SQLite – Lightweight database for jobs and evaluation data
+- Playwright – Browser automation for LinkedIn workflows
+- Pydantic – Validation and schema enforcement
 
 ### Frontend
-- React – Component-based UI development  
-- Bootstrap – Responsive UI styling  
-- Vite – Frontend build tool and dev server  
+
+- React – Component-based UI development
+- Bootstrap – Styling and responsive layout
+- Vite – Frontend build and dev server
 
 ### AI / LLM Layer
-- Ollama – Local LLM runtime  
-- Qwen3.5 (various sizes) – Local inference model for text generation tasks  
+
+- Ollama – Local LLM runtime
+- Qwen 3.5 – Local inference model for CV and cover-letter generation
 
 ### Infrastructure & Tooling
-- UV – Python dependency and environment management  
-- Node.js + npm – Frontend dependency management  
-- Pytest – Backend testing framework
+
+- UV – Python dependency and environment management
+- Node.js + npm – Frontend package management
+- Pytest – Backend test suite
 
 ---
 
@@ -51,9 +58,10 @@ This project automates CV-based job searching and LinkedIn job interactions usin
 - [Feature Showcase](#feature-showcase)
 - [Project Structure](#project-structure)
 - [Architecture Diagram](#architecture-diagram)
-- [Backend Setup](#backend-setup-instructions-for-sqlite-database-and-python-fastapi-backend)
-- [Ollama Installation](#install-ollama-and-download-a-model)
-- [Frontend Setup](#running-the-frontend-application)
+- [Setup](#setup)
+- [Ollama Setup](#ollama-setup)
+- [Running the App](#running-the-app)
+- [Testing](#testing)
 - [Additional Information](#additional-information)
 
 ---
@@ -105,24 +113,26 @@ This project automates CV-based job searching and LinkedIn job interactions usin
 ```
 AI_CV_Customization/
 ├── cv_editing_react_app/
-│   ├── backend/              # Python Flask API
-│   │   ├── api/              # API routes and endpoints
-│   │   ├── config/           # Configuration files
-│   │   ├── schema/           # Data validation schemas
-│   │   ├── services/         # Business logic and services
-│   │   ├── database/         # Database models and utilities
-│   │   └── test/             # Backend tests
-│   └── frontend/my-app/      # React frontend application
-│       ├── src/              # React components and pages
-│       ├── public/           # Static assets
-│       └── package.json      # Node.js dependencies
-├── job_listings/             # Job listings data
-└── assets/                   # Project assets
+│   ├── backend/
+│   │   ├── api/                      # FastAPI routes and app entrypoint
+│   │   ├── schema/                   # Request/response validation schemas
+│   │   ├── services/                 # Business logic, LLM integration, PDF rendering, Playwright automation
+│   │   │   ├── browser_automation_playwright/
+│   │   │   ├── database/
+│   │   │   └── llm.py
+│   │   └── test/                     # Backend tests
+│   └── frontend/my-app/              # React + Vite frontend app
+│       ├── src/                      # React components and pages
+│       ├── public/                   # Static assets and HTML templates
+│       └── package.json              # Frontend dependencies and scripts
+├── job_listings/                      # Saved job listings data
+├── package.json                       # Root scripts for running backend/frontend together
+├── pyproject.toml                     # Python dependencies and project config
+└── assets/                            # Project screenshots and media
 ```
-The project is divided into two main directories:
 
-- **backend/**: Contains the FastAPI backend code, including the database, API routes.
-- **frontend/**: Contains the React frontend code, including the UI components and state management.
+The app is now organized under the cv_editing_react_app directory, with the backend and frontend split into separate subprojects.
+
 ---
 
 # Architecture Diagram
@@ -141,9 +151,7 @@ Database (SQLite)
 Ollama (Local LLM)
 ```
 
-
-
-# Backend Setup Instructions for SQLite Database and Python FastAPI Backend
+# Setup
 
 ## 1. Clone the Repository
 
@@ -154,9 +162,9 @@ cd AI_CV_Customization
 
 ---
 
-## 2. Install UV
+## 2. Install UV and Python Dependencies
 
-If you do not already have `uv` installed:
+If you do not already have UV installed:
 
 ```bash
 pip install uv
@@ -168,11 +176,7 @@ Verify the installation:
 uv --version
 ```
 
----
-
-## 3. Install Project Dependencies
-
-Install all Python dependencies and create the virtual environment:
+Install the project dependencies and create the virtual environment from the repository root:
 
 ```bash
 uv sync
@@ -180,23 +184,22 @@ uv sync
 
 ---
 
-## 4. Install Playwright Browser Binaries
+## 3. Install Playwright Browser Binaries
 
-Playwright requires browser binaries for web automation. Install them with:
+Playwright is used for LinkedIn automation. Install the browser binaries with:
 
 ```bash
-uv run playwright install
+uv run --directory cv_editing_react_app/backend playwright install
 ```
 
 ---
 
-## 5. Configure Authentication
+## 4. Configure LinkedIn Credentials
 
-Create a `.env` file inside the `backend/` directory:
+Create a `.env` file inside the backend directory:
 
 ```text
-backend/
-└── .env
+cv_editing_react_app/backend/.env
 ```
 
 Add your LinkedIn credentials:
@@ -215,80 +218,76 @@ password=my_password
 
 ---
 
-## 6. Initialize the Database
+## 5. Initialize the Database
 
-Run the following command from the `backend/` directory:
+Run the database bootstrap from the repository root or from the backend directory:
 
 ```bash
-uv run python -m services.database.db
+uv run --directory cv_editing_react_app/backend python -m services.database.db
 ```
-Run this to Reset the database (Optional):
+
+To reset the database and recreate its tables:
 
 ```bash
-uv run python -m services.database.db --reset
+uv run --directory cv_editing_react_app/backend python -m services.database.db --reset
 ```
 
 ---
 
-## 7. Start the Backend Server
+## 6. Start the Backend Server
 
-Launch the FastAPI server:
+You can start the backend from the repository root with the helper script:
 
 ```bash
-uv run uvicorn api.server:app --reload --port 8000
+npm run backend
+```
+
+Or start it directly:
+
+```bash
+uv run --directory cv_editing_react_app/backend uvicorn api.server:app --reload --port 8000
 ```
 
 The API will be available at:
 
-- **Application:** http://localhost:8000
-- **Swagger UI:** http://localhost:8000/docs
-- **ReDoc:** http://localhost:8000/redoc
+- Application: http://localhost:8000
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
 ---
 
-# Install Ollama and Download a Model
+# Ollama Setup
 
-Ollama allows you to run large language models locally on your machine.
+Ollama is used for local LLM inference.
 
----
+## 1. Install Ollama
 
-## Download and Install Ollama
+Download and install Ollama from:
 
-Go to the official website and install Ollama based on your operating system:
+https://ollama.com/download
 
-👉 https://ollama.com/download
-
-### After installation, verify it works:
+Verify the installation:
 
 ```bash
 ollama --version
 ```
 
----
-
-## Download a Model
-
-To download (pull) a model, use:
+## 2. Pull a Model
 
 ```bash
-ollama pull qwen3.5:9b # Other models qwen3.5:2b, qwen3.5:4b, qwen3.5:27b if you are in Mac then -mlx versions
+ollama pull qwen3.5:9b
 ```
 
----
+## 3. Adjust the Model Settings
 
-## Edit the backend/config/local_llm_settings.py file
-
-Update the `MODEL_NAME` and `HOST_ADDRESS` variables in the `local_llm_settings.py` file:
+The backend currently reads its model configuration from the LLM service file at cv_editing_react_app/backend/services/llm.py. Update the values there if needed:
 
 ```python
 MODEL_NAME = "qwen3.5:9b"
-
 HOST_ADDRESS = "http://localhost:11434"
 ```
 
----
-
-## Remove a Model (Optional)
+## 4. Remove a Model (Optional)
 
 ```bash
 ollama rm qwen3.5:9b
@@ -296,78 +295,54 @@ ollama rm qwen3.5:9b
 
 ---
 
-# Running the Frontend Application
+# Running the App
 
-## 1. Prerequisites: Install Node.js
+## Frontend
 
-Before starting, ensure Node.js and npm are installed:
+Make sure Node.js and npm are installed:
 
 ```bash
 node -v
 npm -v
 ```
 
-If these commands do not work, install Node.js from:
-
-https://nodejs.org/en/download/
-
----
-
-## 2. Navigate to the Frontend Directory
-
-Move into the React application folder:
+From the repository root, start the frontend with:
 
 ```bash
-cd frontend/my-app
+npm run frontend
 ```
 
----
-
-## 3. Install Dependencies (Reproducible Setup)
-
-Install all dependencies exactly as defined in the lock file:
+You can also start it directly from the frontend folder:
 
 ```bash
+cd cv_editing_react_app/frontend/my-app
 npm ci
+npm run dev
 ```
 
----
+## Full Stack
 
-## 4. Start the Development Server
-
-Run the frontend in development mode:
+From the repository root, run both services together:
 
 ```bash
 npm run dev
 ```
-
-# Running both Frontend and Backend using `npm run dev`  [Optional]
-
-Must have this
-```bash
-npm install concurrently
-```
-
-Then run
-
-```bash
-npm run dev
-```
-> make sure you are inside the project root,  `AI_CV_Customization` directory when running this command. 
 
 The frontend will be available at:
-- **Application:** http://localhost:5173/
+
+- Application: http://localhost:5173/
 
 The backend will be available at:
-- **Application:** http://localhost:8000
-- **Swagger UI:** http://localhost:8000/docs
-- **ReDoc:** http://localhost:8000/redoc
+
+- Application: http://localhost:8000
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
 ---
 
-# Running Tests
+# Testing
 
-To run the test suite:
+Run the backend test suite from the repository root:
 
 ```bash
 uv run pytest -q
@@ -393,6 +368,26 @@ uv sync
 ### Install Playwright Browser Binaries
 
 ```bash
+uv run --directory cv_editing_react_app/backend playwright install
+```
+
+### Start the Backend Server
+
+```bash
+npm run backend
+```
+
+### Run the Frontend
+
+```bash
+npm run frontend
+```
+
+### Run the Full Stack
+
+```bash
+npm run dev
+```
 
 ---
 
@@ -400,90 +395,30 @@ uv sync
 
 ## 1. Save LinkedIn Login Cookies (One-Time Setup)
 
-This saves your LinkedIn login session so that you do not need to authenticate every time.
+This saves your LinkedIn login session so you do not need to authenticate every time.
 
 ```bash
-# Run only once
-uv run python -m services.browser_automation_playwright.save_login_cookies
+uv run --directory cv_editing_react_app/backend python -m services.browser_automation_playwright.save_login_cookies
 ```
-
-> **Note:** Make sure you are inside the `backend/` directory when running this command.
-
----
 
 ## 2. Scrape LinkedIn Job Listings (Optional)
 
-To automatically scrape job listings from LinkedIn:
-
 ```bash
-uv run python -m services.browser_automation_playwright.browser_automation
+uv run --directory cv_editing_react_app/backend python -m services.browser_automation_playwright.browser_automation
 ```
 
-> **Note:** Make sure you are inside the `backend/` directory when running this command.
+## 3. Database Management
 
----
-
-## 3. Run Tests
-
-Execute the test suite with:
+### Remove All Job Records (Keep Database)
 
 ```bash
-PYTHONPATH=. uv run pytest -q
+uv run --directory cv_editing_react_app/backend python -c "from services.database.db import delete_all_jobs; delete_all_jobs()"
 ```
 
----
-
-## 4. Database Management
-
-### Remove All Records (Keep Database)
-
-Deletes all records while preserving the database schema and file.
+### Remove the Database File Entirely
 
 ```bash
-uv run python -c "from services.database.db import delete_all_records; delete_all_records()"
-```
-
-### Completely Remove the Database
-
-Deletes the database file entirely.
-
-```bash
-uv run python -c "from services.database.db import remove_db; remove_db()"
-```
-
----
-
-## 5. Useful Commands
-
-### Reinstall Project Dependencies
-
-```bash
-uv sync
-```
-
-### Update Dependencies
-
-```bash
-uv lock --upgrade
-uv sync
-```
-
-### Install Playwright Browser Binaries
-
-```bash
-uv run playwright install
-```
-
-### Start the Backend Server
-
-```bash
-uv run uvicorn api.server:app --reload --port 8000
-```
-
-### Run the Test Suite
-
-```bash
-PYTHONPATH=. uv run pytest -q
+uv run --directory cv_editing_react_app/backend python -c "from services.database.db import remove_db; remove_db()"
 ```
 
 ---
