@@ -34,12 +34,12 @@
       "company": "Buawei",
       "position": "Machine Learning Research Engineer",
       "start_date": "2024-03",
-      "end_date": "2024-07",
+      "end_date": "2026-07",
       "location": "Lille, France",
       "highlights": [
-        "Reduced model training time by 90% on a production visual anomaly detection system for industrial inspection - cutting iteration cycles from weeks to days - by engineering a FAISS-backed retrieval architecture deployed end-to-end with PyTorch, OpenCV, and Docker.",
-        "Solved a critical scarce-label bottleneck by fine-tuning Transformer-based diffusion models using Diffusers, ControlNet, and IP-Adapter to generate synthetic images for rare industrial defect classes that were previously impossible to collect at scale, improving downstream production classification accuracy by 34%.",
-        "Cut misclassification rates by 85% across automobile inspection lines by developing and deploying a Vision-Language Model (VLM) using instruction tuning, LoRA, and quantization, enabling zero-shot generalization to new factory environments and eliminating the need for per-site retraining while reducing maintenance overhead."
+        "Reduced model training time by 90% on a production visual anomaly detection system by developing a Transformer-based vision encoder for feature extraction and integrating a vector database for fast similarity retrieval during inference. It was deployed end-to-end with PyTorch, OpenCV, and Docker.",
+        "Solved a critical scarce-label bottleneck by fine-tuning Transformer-based diffusion models with LoRA and quantization, enabling efficient domain adaptation with minimal computational overhead. Integrated ControlNet and IP-Adapter to synthesize realistic industrial defect images while maintaining the structural integrity of source components, improving downstream production classification accuracy by 34%.",
+        "Increased tyre identification number recognition accuracy by 16% by fine-tuning a Transformer-based OCR model (TrOCR) for industrial inspection. Built a reproducible training pipeline with Optuna-based hyperparameter optimization and experiment tracking to improve model performance, then deployed and monitored the system in production, addressing edge cases and failure modes to ensure reliable operation."
       ]
     },
     {
@@ -49,19 +49,26 @@
       "end_date": "2024-03",
       "location": "Lille, France",
       "highlights": [
-        "First-authored 5 publications - including two Q1 journals, one Q2 journal, and two top-tier international conferences - focused on self-supervised learning and fault diagnosis for industrial systems.",
-        "Led a research-to-deployment collaboration with SNCF to develop a physics-informed AI system for railway track monitoring, reducing false alarms on safety-critical infrastructure and lowering unnecessary inspection callouts and operational costs.",
-        "Improved remaining useful life (RUL) prediction accuracy by 37% for industrial components using deep learning, enabling earlier maintenance interventions and reducing unplanned downtime risk.",
-        "Reduced labeled data requirements by 55% through a hybrid self-supervised fault diagnosis framework, enabling reliable ML-based diagnosis in real-world industrial settings with scarce annotated failure data."
+        "First-authored 5 publications - including two Q1 journals, one Q2 journal, and two top-tier conferences - on self-supervised learning and fault diagnosis for industrial systems.",
+        "Led a research-to-deployment collaboration with SNCF to develop a physics-informed AI system for railway track monitoring, reducing false alarms and unnecessary safety inspections.",
+        "Reduced labeled data requirements by 55% through a hybrid self-supervised fault diagnosis framework, enabling reliable ML-based diagnosis with scarce failure data."
       ]
     }
   ],
   "projects": [
     {
+      "name": "AI Job Application Automation System",
+      "url": "https://github.com/mohan696matlab/AI_CV_Customization",
+      "highlights": [
+        "Engineered a local LLM application using Ollama, LangChain, and LangGraph for resume customization and cover letter generation, implementing agentic error correction, fallback workflows, and structured output validation to ensure reliable generation while preserving factual consistency.",
+        "Implemented LLM observability and evaluation pipelines to monitor model latency, response quality, structured output failures, and generation performance across different models, enabling systematic optimization of AI workflows."
+      ]
+    },
+    {
       "name": "AI Automation in Healthcare",
       "highlights": [
         "Fine-tuned German ASR models and built an on-premise LLM tool-calling pipeline for automated clinical transcription and patient record updates, ensuring strict data sovereignty compliance for hospital environments.",
-        "Orchestrated multi-step clinical workflows using LangChain and LangGraph, integrating Postgres for structured clinical data storage and FastAPI for production-grade serving.",
+        "Orchestrated multi-step clinical workflows using LangChain and LangGraph, integrating SQL for structured clinical data storage and FastAPI for production-grade serving.",
         "Designed safety-critical deployment safeguards including deterministic fallback mechanisms, structured output validation, and human-in-the-loop review gates for high-risk clinical record modifications."
       ]
     },
@@ -78,14 +85,6 @@
       "highlights": [
         "Designed and deployed a production-grade Retrieval-Augmented Generation (RAG) system using LLaMA 3.2, LangChain, LangGraph, and Qdrant to enable context-aware querying over the Bhagavad Gita corpus, with a FastAPI backend, Dockerized deployment, and CI/CD pipelines for scalable serving.",
         "Improved retrieval relevance and response grounding by optimizing embedding strategies and tuning vector search performance for high-quality semantic retrieval."
-      ]
-    },
-    {
-      "name": "AI Job Application Automation System",
-      "url": "https://github.com/mohan696matlab/AI_CV_Customization",
-      "highlights": [
-        "Designed and built an end-to-end AI-powered job application platform using React, FastAPI, and SQLite, integrating Playwright-based LinkedIn scraping, semantic job-resume matching, and structured job intelligence extraction to automate job discovery, ranking, and analysis.",
-        "Developed a local LLM-based resume and cover letter generation system using Ollama (Qwen 3 9B), enabling dynamic CV tailoring based on job descriptions while preserving factual consistency and supporting fully privacy-preserving, open-source deployment."
       ]
     }
   ],

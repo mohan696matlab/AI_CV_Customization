@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function Jobs({
   form,
@@ -17,6 +19,7 @@ function Jobs({
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [searchUrl, setSearchUrl] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
+  const [createdAfterDate, setCreatedAfterDate] = useState(null);
 
   const handleLinkedinCredentials = async () => {
     try {
@@ -37,13 +40,12 @@ function Jobs({
         "http://localhost:8000/automated-job-search",
         {
           search_url: searchUrl,
-        }
+        },
       );
 
       const processId = res.data.process_id;
       console.log("Process ID:", processId);
       setPlaywrightProcessId(processId);
-
     } catch (error) {
       console.error(error);
       alert("Failed to perform automated job search");
@@ -57,7 +59,7 @@ function Jobs({
       if (!playwrightProcessId) return;
 
       await axios.post(
-        `http://localhost:8000/automated-job-search/stop/${playwrightProcessId}`
+        `http://localhost:8000/automated-job-search/stop/${playwrightProcessId}`,
       );
       setPlaywrightProcessId(null);
     } catch (error) {
@@ -98,10 +100,16 @@ function Jobs({
       const keywordMatch =
         keywordFilter === "" ||
         job.job_keywords.some((keyword) =>
-          keyword.toLowerCase().includes(keywordFilter.toLowerCase())
+          keyword.toLowerCase().includes(keywordFilter.toLowerCase()),
         );
 
-      return scoreMatch && keywordMatch;
+      const jobCreatedDate = new Date(
+        job.created_at.replace(" ", "T").split(".")[0],
+      );
+
+      const dateMatch = !createdAfterDate || jobCreatedDate >= createdAfterDate;
+
+      return scoreMatch && keywordMatch && dateMatch;
     })
     .sort((a, b) => b.matching_score - a.matching_score);
 
@@ -124,10 +132,21 @@ function Jobs({
       {/* Top bar */}
 
       <button
-        className="btn btn-secondary btn-lg"
+        className="btn btn-lg position-fixed shadow-lg d-flex align-items-center gap-2"
+        style={{
+          top: "90px",
+          right: "30px",
+          zIndex: 1030,
+          backgroundColor: "#4d45c9",
+          color: "white",
+          border: "white solid 1px",
+          padding: "16px 28px",
+          fontSize: "1.2rem",
+          borderRadius: "20px",
+        }}
         onClick={() => setShowSidebar(true)}
       >
-        Filters / Search
+        🔍 Search Jobs
       </button>
 
       {/* Sidebar overlay */}
@@ -183,12 +202,22 @@ function Jobs({
               {loadingSearch ? "Searching..." : "Start Automated Job Search"}
             </button>
 
-            <button
-              className="btn btn-danger w-100"
-              onClick={stopJob}
-            >
+            <button className="btn btn-danger w-100" onClick={stopJob}>
               Cancel Search
             </button>
+
+            <div className="col-md-6 my-3 d-flex  ">
+              <label className="form-label mb-0">Job Scraped Date</label>
+
+              <DatePicker
+                className="form-control mb-0"
+                selected={createdAfterDate}
+                onChange={(date) => setCreatedAfterDate(date)}
+                placeholderText="Select a date"
+                isClearable
+                dateFormat="yyyy-MM-dd"
+              />
+            </div>
 
             <label className="form-label">Minimum Matching Score</label>
             <input

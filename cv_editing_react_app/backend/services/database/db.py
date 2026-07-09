@@ -74,6 +74,7 @@ def job_to_dict(job):
 
         "review": getattr(job, "review", None),
         "job_keywords": getattr(job, "job_keywords", []),
+        "created_at": getattr(job, "created_at", None),
     }
 
 def dict_to_job(data: dict) -> Job:
@@ -102,5 +103,27 @@ def add_llm_eval(llm_eval):
         session.add(llm_eval)
         session.commit()
 
+import argparse
+
 if __name__ == "__main__":
-    init_db()
+    parser = argparse.ArgumentParser(description="Database management")
+
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Delete all tables and recreate the database"
+    )
+
+    args = parser.parse_args()
+
+    if args.reset:
+        print("Dropping all tables...")
+        remove_db()
+
+        print("Creating tables...")
+        init_db()
+
+        print("Database reset completed.")
+    else:
+        init_db()
+        print("Database initialized.")

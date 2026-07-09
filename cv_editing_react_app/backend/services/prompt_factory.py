@@ -1,6 +1,14 @@
 
 from typing import Dict, Any, Optional, Union, List
 
+def get_simple_schema(model):
+    schema = model.model_json_schema()
+
+    return {
+        field: [info.get("type"), info.get("description")]
+        for field, info in schema["properties"].items()
+    }
+
 def edit_cv_with_ai_prompt(
     full_cv_context: Dict[str, Any],
     job_analytics: Optional[Union[str, Dict[str, Any]]],
@@ -154,9 +162,7 @@ Return ONLY valid JSON.
 
     return prompt
 
-def extract_job_insights_prompt(job_description: str, pydantic_model):
-
-    schema = pydantic_model.model_json_schema()
+def extract_job_insights_prompt(job_description: str):
 
     prompt = f"""
 You are an expert AI recruiter and job description analyst.
@@ -168,20 +174,41 @@ STRICT OUTPUT RULES:
 - Do not include explanations, comments, markdown, or any text outside the JSON.
 - All outputs must be in English.
 - If the job description is written in another language, internally translate it to English before extracting information.
-- Do not hallucinate information. If a field is not available, use "Not Specified" or an empty list where appropriate.
+- Do not hallucinate information.
+- If a field is not available, use "Not Specified" or an empty list where appropriate.
 - Extract only information explicitly mentioned or strongly implied by the job description.
 - Keep lists concise and focus only on the most important items.
-- Ensure the output strictly follows the JSON schema below.
+- Ensure the output strictly follows the JSON structure below.
 
 JOB DESCRIPTION
 ---------------
 {job_description}
 
-Return a JSON object that strictly follows this JSON Schema:
+Return a JSON object with exactly this structure:
 
-{schema}
+{{
+    "job_title": "The job title",
+    "company_name": "The company name or Not Specified",
+    "required_skills": [
+        "Most important technical skills, tools, frameworks, and technologies required for the role"
+    ],
+    "key_responsibilities": [
+        "Top responsibility or mission of the role",
+        "Another key responsibility"
+    ],
+    "experience_level": "Expected seniority level (Junior, Mid, Senior, Lead, PhD, or Not Specified)",
+    "role_summary": "A concise 2-3 sentence summary explaining the purpose and impact of this role"
+}}
+
+Field descriptions:
+- job_title: Extract the official role title from the job description.
+- company_name: Extract the company name. Use "Not Specified" if unavailable.
+- required_skills: Include only important technical skills, tools, frameworks, programming languages, and technologies explicitly required or strongly implied.
+- key_responsibilities: Extract the top 3-5 responsibilities or missions.
+- experience_level: Determine the expected seniority level. Use "Not Specified" if unclear.
+- role_summary: Summarize what the person will actually do and why the role exists.
+
 """
-
     return prompt
 
 def create_cover_letter_prompt(full_cv_context: Dict[str,Any], job_analytics: Optional[Union[str, Dict[str, Any]]]):
@@ -247,6 +274,68 @@ Candidate Name: {full_cv_context['name']}
 {projects}
 """
     return prompt
+
+def generate_connection_message_prompt(profileText: str, wordLimit: int, promptText: str, cvText: Optional[Union[str, Dict[str, Any]]],):
+    system_prompt = """
+You write casual, human LinkedIn messages.
+
+Your writing style:
+- Direct and specific.
+- Slightly informal, like a real person.
+- Friendly but not overly enthusiastic.
+- Never sound like a recruiter, salesperson, or AI assistant.
+- Avoid corporate language and generic networking phrases.
+"""
+
+    prompt = f"""
+    {promptText}
+
+    Your task is to write a short LinkedIn message that I can send directly to this person.
+
+    Use their profile/post as the main context.
+
+    Writing rules:
+    - Mention ONE specific thing from their profile, post, project, research, or career journey.
+    - Explain naturally why I am reaching out.
+    - Include only one relevant detail about me if it helps create a genuine connection.
+    - Do not summarize my CV.
+    - Do not make claims that are not supported by the provided information.
+    - The message should feel personal, not like a template.
+
+    OUTPUT FORMAT REQUIREMENTS:
+
+    - Return ONLY valid JSON.
+    - Do not include markdown code blocks.
+    - Do not include any explanation before or after the JSON.
+    - The JSON must contain exactly one field: "message".
+    - The value of "message" must contain the complete LinkedIn message text.
+
+    Required JSON structure:
+
+    {{
+    "message": "Your LinkedIn message here"
+    }}
+
+    Rules for the message field:
+    - The message must be ready to copy and paste directly into LinkedIn.
+    - Do not include a subject line.
+    - Do not include bullet points.
+    - Do not include greetings/signatures unless they naturally fit the message.
+    - Keep the message under {wordLimit} words.
+    - Keep it concise (ideally 2-4 sentences).
+
+    Person's profile/post:
+    <profile>
+    {profileText}
+    </profile>
+
+    My background (use only if relevant):
+    <cv>
+    {cvText}
+    </cv>
+    """
+
+    return system_prompt, prompt
     
 
 if __name__ == "__main__":

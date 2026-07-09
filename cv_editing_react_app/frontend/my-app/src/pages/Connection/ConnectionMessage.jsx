@@ -34,7 +34,7 @@ function ConnectionMessage({ form, connMessage, setConnMessage }) {
 
       setConnMessage((prev) => ({
         ...prev,
-        connectionMessage: response.data,
+        connectionMessage: response.data.message,
       }));
 
       setLoading(false); // Set loading to false when the response is received

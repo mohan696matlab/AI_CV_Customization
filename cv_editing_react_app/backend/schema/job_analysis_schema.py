@@ -25,3 +25,15 @@ class JobInsights(BaseModel):
     role_summary: str = Field(
         description="A concise 2-3 sentence summary explaining the real purpose and impact of this role."
     )
+
+if __name__ == "__main__":
+    def get_simple_schema(model):
+        schema = model.model_json_schema()
+
+        return {
+            field: [info.get("type"), info.get("description")]
+            for field, info in schema["properties"].items()
+        }
+    
+    print(get_simple_schema(JobInsights))
+    # print(JobInsights.model_json_schema())

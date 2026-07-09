@@ -667,7 +667,7 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                 <button
                   className="btn btn-primary w-100 mb-3"
                   disabled={loading}
-                  onClick={() => handleSubmit(["summary", "experience", "projects", "skills"])}
+                  onClick={(e) => handleSubmit(e,["summary", "experience", "projects", "skills"])}
                 >
                   {loading ? (
                     <>

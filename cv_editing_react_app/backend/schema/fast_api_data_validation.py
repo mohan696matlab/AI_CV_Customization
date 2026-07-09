@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any, Union, Literal
+from datetime import datetime
 
 
 class LinkedInSearchURL(BaseModel):
@@ -36,15 +37,7 @@ class ConnectionRequest(BaseModel):
     cvText: Optional[Union[str, Dict[str, Any]]]
     creativity: float
 
-class JobAnalytics(BaseModel):
-    technical_skills_score: int
-    tools_frameworks_score: int
-    experience_score: int
-    domain_score: int
-    education_score: int
-    matching_score: int
-    review: str
-    job_keywords: List[str]
+
 
 class JobDBSchema(BaseModel):
     id: int
@@ -63,5 +56,6 @@ class JobDBSchema(BaseModel):
 
     review: Optional[str]
     job_keywords: List[str]
+    created_at: datetime
 
     model_config = {"from_attributes": True}

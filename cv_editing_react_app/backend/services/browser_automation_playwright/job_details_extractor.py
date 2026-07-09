@@ -1,14 +1,24 @@
 
 import json
 from typing import List, Optional, Dict, Any, Union
-from pydantic import ValidationError
+from pydantic import ValidationError, BaseModel, Field
 
-from schema.fast_api_data_validation import JobAnalytics
+from services.llm import LLM_With_Tracking
+
+class JobMatchAnalytics(BaseModel):
+    technical_skills_score: int
+    tools_frameworks_score: int
+    experience_score: int
+    domain_score: int
+    education_score: int
+    matching_score: int
+    review: str
+    job_keywords: List[str]
 
 
 
 
-def extract_job_details(job_description: str, cv_context: Union[str,Dict[str,Any]]) -> JobAnalytics:
+def extract_job_details(job_description: str, cv_context: Union[str,Dict[str,Any]]) -> JobMatchAnalytics:
 
     system_prompt = """
 You are an expert AI recruiter and resume analyzer.
@@ -103,26 +113,14 @@ Candidate CV:
 """
 
 
-    response = client.chat(
-        model=MODEL_NAME,
-        messages=[{"role": "system", "content": system_prompt},
-                  {"role": "user", "content": prompt}],
-        format="json",
-        think=False,
-        options={
-            "temperature": 0.2,
-            "top_p": 0.90,
-            "repeat_penalty": 1.05,
-        },
-    )
+    llm_with_tracking = LLM_With_Tracking(temperature=0.2, task_name="cv_to_job_matching")
+    messages = [("system", system_prompt),("human", prompt)]
+    output =llm_with_tracking.invoke_with_tracking(messages,pydantic_model=JobMatchAnalytics)
 
-    data = json.loads(response["message"]["content"])
-    # validate
-    try:
-        analytics = JobAnalytics.model_validate(data)
-        print("Valid response")
-        return analytics
-    except ValidationError as e:
-        print("Invalid response")
-        print(e)
+    if output["error"]:
+        print(output["error"])
         return None
+
+    structured_output = output["structured_output"]
+
+    return structured_output

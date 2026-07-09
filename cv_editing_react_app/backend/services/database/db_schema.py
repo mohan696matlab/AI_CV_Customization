@@ -56,7 +56,8 @@ class LLM_Eval(Base):
         default=lambda: datetime.now(timezone.utc),
         nullable=False
     )
-
+    model_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    temperature: Mapped[float] = mapped_column(Float, nullable=False)
     task_name: Mapped[str] = mapped_column(String(255), nullable=False)
 
     raw_output: Mapped[str | None] = mapped_column(Text, nullable=True)

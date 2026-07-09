@@ -18,6 +18,8 @@ class LLM_With_Tracking:
                                 # other params...
                             )
         self.task_name = task_name or "unknown"
+        self.model_name = model_name
+        self.temperature = temperature
 
     def invoke_with_tracking(self, messages, pydantic_model=None):
         start_time = time.time()
@@ -46,6 +48,7 @@ class LLM_With_Tracking:
             elapsed = time.time() - start_time
 
         result = {
+            "model_name": self.model_name,
             "structured_output": structured_output,
             "raw_output": raw_output,
             "task_name": self.task_name,
@@ -54,9 +57,12 @@ class LLM_With_Tracking:
             "output_tokens": num_output_tokens,
             "total_tokens": num_total_tokens,
             "error": error_message,
+            "temperature": self.temperature,
         }
 
         eval_entry = LLM_Eval(
+            model_name=result["model_name"],
+            temperature=result["temperature"],
             task_name=result["task_name"],
             raw_output=result["raw_output"],
             time_taken=result["time_taken"],
@@ -73,6 +79,8 @@ class LLM_With_Tracking:
 if __name__ == "__main__":
     from pydantic import BaseModel, Field
 
+
+
     class Movie(BaseModel):
         """A movie with details."""
         title: str = Field(description="The title of the movie")
@@ -85,10 +93,10 @@ if __name__ == "__main__":
         Return ONLY a JSON object.
         Do NOT return the schema.
         The JSON object must conform to this JSON Schema:
-        {Movie.model_json_schema()}
+        {get_simple_schema(Movie)}
         '''
-    
-    llm_tracker = LLM_With_Tracking(model_name=MODEL_NAME, task_name="cv_editing")
+    # print(prompt)
+    llm_tracker = LLM_With_Tracking(model_name=MODEL_NAME,temperature=0.2, task_name="movie_details")
 
     messages = [
         ("system","You are a helpful assistant."),

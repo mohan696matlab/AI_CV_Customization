@@ -222,6 +222,11 @@ Run the following command from the `backend/` directory:
 ```bash
 uv run python -m services.database.db
 ```
+Run this to Reset the database (Optional):
+
+```bash
+uv run python -m services.database.db --reset
+```
 
 ---
 
