@@ -70,13 +70,19 @@
         font-size: 11.5pt;
         font-weight: 700;
         border-bottom: 1px solid #d0d0d0;
-        margin-bottom: 6px;
+        margin-bottom: 5px;
         padding-bottom: 2px;
       }
 
       /* ENTRY */
+      .entry ul li p,
+      .entry ul li div {
+        margin: 0;
+        padding: 10;
+        display: inline;
+      }
       .entry {
-        margin-bottom: 8px;
+        margin-bottom: 5px;
       }
 
       .entry-header {
@@ -93,6 +99,21 @@
         margin-bottom: 3px;
       }
 
+      .publications-list {
+        margin: 0;
+        padding-left: 15px;
+      }
+
+      .publications-list li {
+        margin: 0 0 5px 0;
+        padding: 0;
+        line-height: 1.25;
+      }
+
+      .publications-list li:last-child {
+        margin-bottom: 0;
+      }
+
       /* =======================
    LIST FIX (IMPORTANT)
    ======================= */
@@ -104,8 +125,8 @@
 
       /* remove ALL spacing between bullets */
       li {
-        margin: 0;
-        padding: 0;
+        margin: 0px;
+        padding: 5px;
         line-height: 1.25;
       }
 
@@ -170,7 +191,7 @@
     </div>
 
     <!-- SUMMARY -->
-     {{#summary}}
+    {{#summary}}
     <div class="section">
       <div class="section-title">Summary</div>
       <div>{{{summary}}}</div>
@@ -251,14 +272,16 @@
         {{/google_scholar}}
       </div>
 
-      {{#publications}}
-      <div class="entry">
-        <div>{{title}}</div>
-        <div style="font-size: 9pt">
-          {{journal}} | {{date}} {{#doi}} | <a href="{{doi}}">DOI</a>{{/doi}}
-        </div>
-      </div>
-      {{/publications}}
+      <ul class="publications-list">
+        {{#publications}}
+        <li>
+          <div>{{title}}</div>
+          <div style="font-size: 9pt">
+            {{journal}} | {{date}} {{#doi}} | <a href="{{doi}}">DOI</a>{{/doi}}
+          </div>
+        </li>
+        {{/publications}}
+      </ul>
     </div>
     {{/publications.length}}
 

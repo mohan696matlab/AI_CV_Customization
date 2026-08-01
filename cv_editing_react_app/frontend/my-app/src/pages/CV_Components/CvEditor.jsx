@@ -6,11 +6,38 @@ import Skills from "./Skills";
 import SummarySection from "./SummarySection";
 import ResumePreview from "./ResumePreview";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function CvEditor({ form, setForm, analysis, cvData }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const openUploadDialog = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleUploadJSON = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        setForm(parsed);
+        setErrorMessage(null);
+      } catch (err) {
+        setErrorMessage("Uploaded file is not valid JSON.");
+      }
+    };
+    reader.onerror = () => {
+      setErrorMessage("Failed to read the uploaded file.");
+    };
+    reader.readAsText(file);
+
+    event.target.value = "";
+  };
 
   const handleReset = () => {
     setForm(cvData);
@@ -75,7 +102,20 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
       setLoading(false);
     }
   };
+  const handleDownloadJSON = () => {
+    const json = JSON.stringify(form, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
 
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "CV_DATA.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  };
   const handleChange = (e) => {
     setForm((prev) => ({
       ...prev,
@@ -371,11 +411,36 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
       <div className="container-fluid py-4">
         {/* Reset Button */}
         <button
-          className="btn btn-outline-danger mb-4"
+          className="btn btn-outline-danger mb-4 me-2"
           disabled={loading}
           onClick={handleReset}
         >
           Reset the CV Data 🔄
+        </button>
+
+        {/* Download Button */}
+        <button
+          className="btn btn-outline-info mb-4 me-2"
+          disabled={loading}
+          onClick={handleDownloadJSON}
+        >
+          Download CV as JSON 📥
+        </button>
+
+        <input
+          type="file"
+          accept="application/json,.json"
+          ref={fileInputRef}
+          onChange={handleUploadJSON}
+          style={{ display: "none" }}
+        />
+
+        <button
+          className="btn btn-outline-secondary mb-4 me-2"
+          disabled={loading}
+          onClick={openUploadDialog}
+        >
+          Upload CV JSON 📤
         </button>
 
         {/* Error */}
@@ -534,7 +599,7 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                       onAddHighlight={addExperienceHighlight}
                       onRemoveHighlight={removeExperienceHighlight}
                     />
-                                        <button
+                    <button
                       type="button"
                       className="btn btn-outline-primary btn-sm ms-2 me-2"
                       onClick={(e) => {
@@ -576,7 +641,7 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                       onAddHighlight={addProjectHighlight}
                       onRemoveHighlight={removeProjectHighlight}
                     />
-                                                            <button
+                    <button
                       type="button"
                       className="btn btn-outline-primary btn-sm ms-2 me-2"
                       onClick={(e) => {
@@ -644,7 +709,7 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                       onAddSkill={addSkill}
                       onRemoveSkill={removeSkill}
                     />
-                                                            <button
+                    <button
                       type="button"
                       className="btn btn-outline-primary btn-sm ms-2 me-2"
                       onClick={(e) => {
@@ -667,7 +732,14 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
                 <button
                   className="btn btn-primary w-100 mb-3"
                   disabled={loading}
-                  onClick={(e) => handleSubmit(e,["summary", "experience", "projects", "skills"])}
+                  onClick={(e) =>
+                    handleSubmit(e, [
+                      "summary",
+                      "experience",
+                      "projects",
+                      "skills",
+                    ])
+                  }
                 >
                   {loading ? (
                     <>
