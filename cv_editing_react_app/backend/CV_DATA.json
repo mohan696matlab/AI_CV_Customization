@@ -9,7 +9,7 @@
   "linkedin": "https://www.linkedin.com/in/balyogi-mohan-dash/",
   "github": "https://github.com/mohan696matlab",
   "google_scholar": "https://scholar.google.com/citations?user=jzcIElIAAAAJ",
-  "summary": "I build production-grade AI systems across computer vision and generative AI. At Buawei I built a **GenAI defect synthesis pipeline** that noticeably improved defect classification and cut down manual labeling work, and I also developed **LLM-powered agentic workflows** for healthcare automation (LangChain, LangGraph, RAG, FastAPI, Docker). My PhD research was on self-supervised learning and industrial fault diagnosis. Outside of that I write production-ready Python and post AI content on **YouTube**. I hold a **Passport Talent Visa, valid until 2028**.",
+  "summary": "I have built production-grade AI systems across computer vision and generative AI for **Renault, Thales, SNCF**. At Buawei I built a **GenAI defect synthesis pipeline** that noticeably improved defect classification and cut down manual labeling work, and I also developed **LLM-powered agentic workflows** for healthcare automation. My PhD research was on self-supervised learning and industrial fault diagnosis. Outside of that I post Educational AI content on my **YouTube Channel**. I hold a **Passport Talent Visa, valid until 2028**.",
   "education": [
     {
       "institution": "University of Lille, CRIStAL Lab",
@@ -116,16 +116,8 @@
   ],
   "skills": [
     {
-      "label": "Technical Skills",
+      "label": "Tech Stack",
       "details": "Python, SQL, PyTorch, TensorFlow, Transformers, Diffusers, LangChain, LangGraph, VectorDB, Docker, REST APIs, CI/CD, Git, scikit learn, Pandas, Numpy"
-    },
-    {
-      "label": "Research Areas",
-      "details": "Generative AI, LLMs, Computer Vision, Industrial AI, Fault Diagnosis, Self-Supervised Learning, Model Quantization, RAG systems"
-    },
-    {
-      "label": "Transferable Skills",
-      "details": "Cross-functional collaboration, technical communication, research and development, self-motivation"
     },
     {
       "label": "Languages",
