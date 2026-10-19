@@ -7,6 +7,7 @@ import SummarySection from "./SummarySection";
 import ResumePreview from "./ResumePreview";
 import axios from "axios";
 import { useState, useRef } from "react";
+import { apiUrl } from "../../utlis/api";
 
 export default function CvEditor({ form, setForm, analysis, cvData }) {
   const [loading, setLoading] = useState(false);
@@ -66,15 +67,11 @@ export default function CvEditor({ form, setForm, analysis, cvData }) {
         sections,
       };
 
-      const response = await axios.post(
-        "http://localhost:8000/edit-cv",
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await axios.post(apiUrl("/edit-cv"), payload, {
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       setForm((prev) => ({
         ...prev,

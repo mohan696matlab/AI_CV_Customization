@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiUrl } from "../../utlis/api";
 // Removed react-markdown as we are now rendering structured JSON natively
 
 function JobDescriptionAnalysis({ form, setForm, analysis, setAnalysis }) {
@@ -10,7 +11,7 @@ function JobDescriptionAnalysis({ form, setForm, analysis, setAnalysis }) {
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:8000/extract-job-insights", {
+      const res = await fetch(apiUrl("/extract-job-insights"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

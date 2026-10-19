@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import CoverLetterPreview from "./CoverLetterPreview";
 import { Container, Row, Col, Form, Card } from "react-bootstrap";
+import { apiUrl } from "../../utlis/api";
 
 const CoverLetterEditor = ({
   form,
@@ -42,7 +43,7 @@ const CoverLetterEditor = ({
       };
 
       const { data } = await axios.post(
-        "http://localhost:8000/create-cover-letter",
+        apiUrl("/create-cover-letter"),
         payload,
         {
           headers: {

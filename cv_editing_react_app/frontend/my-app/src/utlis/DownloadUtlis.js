@@ -1,9 +1,10 @@
 import axios from "axios";
+import { apiUrl } from "./api";
 
 const downloadPdf = async (htmlString, name, doc_type) => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/html-to-pdf",
+      apiUrl("/html-to-pdf"),
       {
         html_string: htmlString,
         name: name,

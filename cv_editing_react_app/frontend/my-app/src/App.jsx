@@ -9,6 +9,7 @@ import ConnectionMessage from "./pages/Connection/ConnectionMessage";
 import Jobs from "./pages/JobList/Jobs";
 import Navbar from "./components/Navbar";
 import axios from "axios";
+import { apiUrl } from "./utlis/api";
 
 function App() {
   const [analysis, setAnalysis] = useState(null);
@@ -26,12 +27,12 @@ function App() {
   });
 
   function getSystemTheme() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
 
-const [theme, setTheme] = useState(() => {
+  const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "system";
   });
 
@@ -45,7 +46,7 @@ const [theme, setTheme] = useState(() => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const response = await axios.post("http://localhost:8000/load-cv-data");
+        const response = await axios.post(apiUrl("/load-cv-data"));
         setForm(response.data);
         setCvData(response.data);
       } catch (err) {
@@ -82,7 +83,7 @@ const [theme, setTheme] = useState(() => {
       {/* FIXED NAVBAR WRAPPER */}
       <Navbar theme={theme} setTheme={setTheme} />
 
-      <Container fluid>
+      <Container fluid style={{ paddingTop: "70px" }}>
         <Routes>
           <Route
             path="/"

@@ -23,6 +23,8 @@ class Job(Base):
     company_name: Mapped[str | None] = mapped_column(String, nullable=True)
     job_title: Mapped[str | None] = mapped_column(String, nullable=True)
     job_description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    job_posted_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    applicantsCount: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     technical_skills_score: Mapped[int] = mapped_column(default=0)
     tools_frameworks_score: Mapped[int] = mapped_column(default=0)

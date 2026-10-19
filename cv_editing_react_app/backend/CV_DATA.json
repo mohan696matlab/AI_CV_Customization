@@ -1,15 +1,15 @@
 {
   "name": "Balyogi Mohan Dash",
   "headline": "Machine Learning Engineer (PhD)",
-  "location": "Lille, France",
-  "email": "mohandash96@gmail.com",
-  "phone": "+33 07 52 96 02 12",
-  "website": "",
-  "youtube": "https://www.youtube.com/@Mohankumardash",
+  "location": "Odisha, India",
+  "email": "mohan.dash.phd@gmail.com",
+  "phone": "+91 8908764802",
+  "website": "https://mohan696matlab.github.io/",
+  "youtube": "",
   "linkedin": "https://www.linkedin.com/in/balyogi-mohan-dash/",
-  "github": "https://github.com/mohan696matlab",
+  "github": "",
   "google_scholar": "https://scholar.google.com/citations?user=jzcIElIAAAAJ",
-  "summary": "I have built production-grade AI systems across computer vision and generative AI for **Renault, Thales, SNCF**. At Buawei I built a **GenAI defect synthesis pipeline** that noticeably improved defect classification and cut down manual labeling work, and I also developed **LLM-powered agentic workflows** for healthcare automation. My PhD research was on self-supervised learning and industrial fault diagnosis. Outside of that I post Educational AI content on my **YouTube Channel**. I hold a **Passport Talent Visa, valid until 2028**.",
+  "summary": "I have built production-grade AI systems across computer vision and generative AI for **Renault, Thales, SNCF**. At Buawei I built a **GenAI defect synthesis pipeline** that noticeably improved defect classification and cut down manual labeling work, and I also developed **LLM-powered agentic workflows** for healthcare automation. My PhD research was on self-supervised learning and industrial fault diagnosis. Outside of that I post Educational AI content on my **YouTube Channel**.",
   "education": [
     {
       "institution": "University of Lille, CRIStAL Lab",
@@ -37,21 +37,21 @@
       "end_date": "2026-07",
       "location": "Lille, France",
       "highlights": [
-  "Reduced **model training time by 90%** on a production visual anomaly detection system by developing a **Transformer-based vision encoder** and integrating a **vector database** for fast similarity retrieval during inference. Deployed end-to-end with **PyTorch, OpenCV, and Docker**.",
-  "Solved a critical **scarce-label bottleneck** by fine-tuning **Transformer-based diffusion models** with **LoRA** and quantization for efficient domain adaptation. Integrated **ControlNet** and **IP-Adapter** to synthesize realistic industrial defect images, improving downstream production classification accuracy by **34%**.",
-  "Increased **tyre identification number recognition accuracy by 16%** by fine-tuning a **Transformer-based OCR model (TrOCR)** for industrial inspection. Built a reproducible training pipeline with **Optuna-based hyperparameter optimization** and deployed the system to **production**, ensuring reliable performance on edge cases."
-]
+        "Reduced **model training time by 90%** on a production visual anomaly detection system by developing a **Transformer-based vision encoder** and integrating a **vector database** for fast similarity retrieval during inference. Deployed end-to-end with **PyTorch, OpenCV, and Docker**.",
+        "Solved a critical **scarce-label bottleneck** by fine-tuning **Transformer-based diffusion models** with **LoRA** and quantization for efficient domain adaptation. Integrated **ControlNet** and **IP-Adapter** to synthesize realistic industrial defect images, improving downstream production classification accuracy by **34%**.",
+        "Increased **tyre identification number recognition accuracy by 16%** by fine-tuning a **Transformer-based OCR model (TrOCR)** for industrial inspection. Built a reproducible training pipeline with **Optuna-based hyperparameter optimization** and deployed the system to **production**, ensuring reliable performance on edge cases."
+      ]
     },
     {
       "company": "Stealth AI Startup",
-      "position": "Freelance AI Engineer",
+      "position": "Freelance AI Engineer (Part-time)",
       "start_date": "2025-10",
       "end_date": "2026-05",
       "location": "Remote",
       "highlights": [
-  "Built an **on-premise healthcare AI platform** by fine-tuning **German ASR models** and developing an **LLM-powered agentic pipeline** using **LangChain, LangGraph, and tool calling** for automated clinical transcription and EHR updates.",
-  "Developed **production-ready AI services** using **FastAPI, SQL, Docker, and PyTorch**, integrating **RAG-ready architecture**, workflow orchestration, and scalable inference pipelines. Added **robust evaluation frameworks** at both **end-to-end and component levels**, reducing system errors by **36%**."
-]
+        "Built an on-premise healthcare AI platform by fine-tuning German ASR models and developing an LLM-powered agentic pipeline using LangChain, LangGraph, and tool calling for automated clinical transcription and EHR updates.",
+        "Developed production-ready AI services using FastAPI, SQL, Docker, and PyTorch, integrating RAG-ready architecture, workflow orchestration, and scalable inference pipelines. Applied reinforcement learning-based training (TPU) and added robust evaluation frameworks at both end-to-end and component levels, reducing system errors by 36%."
+      ]
     },
     {
       "company": "University of Lille",

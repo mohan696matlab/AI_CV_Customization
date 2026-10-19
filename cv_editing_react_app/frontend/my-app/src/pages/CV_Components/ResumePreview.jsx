@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import Mustache from "mustache";
 import { marked } from "marked";
 import downloadPdf from "../../utlis/DownloadUtlis";
@@ -19,6 +19,8 @@ export default function ResumePreview({ form, loading }) {
   const renderedHtml = useMemo(() => {
     if (!template) return "";
 
+    const experience = Array.isArray(form.experience) ? form.experience : [];
+    const projects = Array.isArray(form.projects) ? form.projects : [];
     const processedForm = {
       ...form,
 
@@ -26,15 +28,19 @@ export default function ResumePreview({ form, loading }) {
       summary: mdToHtml(form.summary),
 
       // Experience highlights
-      experience: form.experience.map((exp) => ({
+      experience: experience.map((exp) => ({
         ...exp,
-        highlights: exp.highlights.map(mdToHtml),
+        highlights: (Array.isArray(exp.highlights) ? exp.highlights : []).map(
+          mdToHtml,
+        ),
       })),
 
       // Project highlights
-      projects: form.projects.map((proj) => ({
+      projects: projects.map((proj) => ({
         ...proj,
-        highlights: proj.highlights.map(mdToHtml),
+        highlights: (Array.isArray(proj.highlights) ? proj.highlights : []).map(
+          mdToHtml,
+        ),
       })),
     };
 

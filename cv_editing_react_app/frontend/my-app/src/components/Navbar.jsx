@@ -6,7 +6,7 @@ export default function Navbar({ theme, setTheme }) {
   const isActive = (path) => (location.pathname === path ? "active" : "");
 
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="navbar navbar-expand-lg navbar-light bg-body-tertiary fixed-top">
       <div className="container-fluid">
         {/* Brand */}
         <Link className="navbar-brand" to="/">

@@ -1,22 +1,48 @@
 from langchain_ollama import ChatOllama
+from langchain_google_genai import ChatGoogleGenerativeAI
+from dotenv import load_dotenv
+import os
+import json
+import re
+
 import time
 from services.database.db_schema import LLM_Eval
 from services.database.db import add_llm_eval
 
+def parse_llm_json(text: str) -> dict:
+    text = text.strip()
 
-MODEL_NAME = "qwen3.5:9b"
-HOST_ADDRESS = "http://localhost:11434"  # or "http://localhost:11434" "http://ip of your server:11434"
+    # Remove markdown code fence
+    text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s*```$", "", text)
+
+    return json.loads(text)
+
+env_path = ".env"
+load_dotenv(dotenv_path=env_path, override=True)
+
+MODEL_NAME = os.getenv("MODEL_NAME")
+HOST_ADDRESS = os.getenv("HOST_ADDRESS")
 
 class LLM_With_Tracking:
     def __init__(self, model_name=MODEL_NAME, temperature=0, reasoning=False, task_name=None, base_url=HOST_ADDRESS):
-        self.llm = ChatOllama(
-                                model=model_name,
-                                temperature=temperature,
-                                reasoning=reasoning,
-                                keep_alive='20m',
-                                base_url=base_url,
-                                # other params...
-                            )
+        if model_name == 'GEMINI':
+            self.llm = ChatGoogleGenerativeAI(
+                                                model="gemini-3.5-flash-lite",
+                                                temperature=temperature,  # Gemini 3.0+ defaults to 1.0
+                                                thinking_level="minimal",
+                                                include_thoughts=True,
+                                                # other params...
+                                            )
+        else:
+            self.llm = ChatOllama(
+                                    model=model_name,
+                                    temperature=temperature,
+                                    reasoning=reasoning,
+                                    keep_alive='20m',
+                                    base_url=base_url,
+                                    # other params...
+                                )
         self.task_name = task_name or "unknown"
         self.model_name = model_name
         self.temperature = temperature
@@ -32,7 +58,7 @@ class LLM_With_Tracking:
 
         try:
             response = self.llm.invoke(messages)
-            raw_output = response.content
+            raw_output = response.content[0]['text'] if self.model_name == 'GEMINI' else response.content
             elapsed = time.time() - start_time
 
             usage = getattr(response, "usage_metadata", {}) or {}
@@ -41,7 +67,11 @@ class LLM_With_Tracking:
             num_total_tokens = num_input_tokens + num_output_tokens
 
             if pydantic_model is not None and getattr(response, "content", None) is not None:
-                structured_output = pydantic_model.model_validate_json(response.content)
+                if self.model_name == 'GEMINI':
+                    response_text = parse_llm_json(response.content[0]['text'])
+                    structured_output = pydantic_model.model_validate(response_text)
+                else:
+                    structured_output = pydantic_model.model_validate_json(response.content)
 
         except Exception as e:
             error_message = str(e)

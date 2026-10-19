@@ -350,6 +350,37 @@ uv run pytest -q
 
 ---
 
+# Docker
+
+Docker Compose runs the React frontend behind Nginx and the FastAPI backend as separate services. SQLite, generated PDFs, and exported job listings are stored in named volumes.
+
+Rotate any credentials that have previously been committed or shared, then create a local Docker env file:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Fill in `GEMINI_API_KEY` and `APIFY_API_KEY`. For LinkedIn automation, also fill in `LINKEDIN_USERNAME` and `LINKEDIN_PASSWORD`.
+
+Build and start the default Gemini-backed stack:
+
+```bash
+docker compose up --build
+```
+
+Open the application at http://localhost:8080. The backend API and Swagger UI are available through http://localhost:8080/api/docs.
+
+To use the optional Ollama container, set `MODEL_NAME` to the model you pulled and start the profile:
+
+```bash
+docker compose --profile ollama up --build
+docker compose --profile ollama exec ollama ollama pull qwen3.5:9b
+```
+
+Stop the services with `Ctrl+C`, or use `docker compose down`. Do not add `-v` unless you intentionally want to delete the persisted SQLite database and generated files.
+
+---
+
 # Useful Commands
 
 ### Reinstall Project Dependencies

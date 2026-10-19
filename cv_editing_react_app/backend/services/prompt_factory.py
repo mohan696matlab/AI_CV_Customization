@@ -39,47 +39,53 @@ def edit_cv_with_ai_prompt(
     cv_context.append(f"Skills: {full_cv_context['skills']}")
 
     if "summary" in sections:
-        
 
         instructions.append("""
-SUMMARY:
-Rewrite the candidate’s summary to emphasize only the most relevant and verifiable overlaps with the job description, based strictly on the provided Job Analysis and existing summary.
+    SUMMARY:
+    Rewrite the candidate’s summary to emphasize only the most relevant and verifiable overlaps with the job description, based strictly on the provided Job Analysis and existing summary.
 
-- Focus on alignment with the role; prioritize shared skills, experience, and domain relevance.
-- Do not introduce any new claims, skills, or experiences not supported by the input.
-- Keep the result concise, clear, and professional (2–4 sentences maximum).
-- Ensure the tone remains natural and avoids exaggeration or overstatement.
-""")
+    - Focus on alignment with the role; prioritize shared skills, experience, and domain relevance.
+    - Do not introduce any new claims, skills, or experiences not supported by the input.
+    - Keep the result concise, clear, and professional (2–4 sentences maximum).
+    - Ensure the tone remains natural and avoids exaggeration or overstatement.
+    - Use Markdown bold formatting (**text**) to highlight the most relevant keywords, skills, technologies, domain expertise, and measurable achievements.
+    - Highlight only the most important parts; do not bold entire sentences or excessive text.
+    - The Markdown formatting must be included directly in the JSON string.
+    - Example: "PhD-trained **AI/ML Engineer** with experience in **Computer Vision**, **GenAI**, and industrial **fault diagnosis**."
+    """)
 
         output_schema.append(
-            '"summary": "<rewritten summary>"'
+            '"summary": "<rewritten summary with relevant terms highlighted using **bold** Markdown>"'
         )
 
+
     if "experience" in sections:
-        
 
         instructions.append("""
-EXPERIENCE:
-- Keep the exact same number of experience entries, companies, dates, and titles.
-- Reorder the highlights so the most relevant achievements appear first.
-- Refine wording for clarity and impact without changing factual content.
-""")
+    EXPERIENCE:
+    - Keep the exact same number of experience entries, companies, dates, and titles.
+    - Reorder the highlights so the most relevant achievements appear first.
+    - Refine wording for clarity and impact without changing factual content.
+    - Use Markdown bold formatting (**text**) to highlight the most relevant skills, technologies, methods, domain expertise, and measurable achievements in each highlight.
+    - Highlight only important information; do not bold entire sentences.
+    - The Markdown formatting must be included directly in the JSON strings.
+    """)
 
         output_schema.append("""
-"experience": [
-    {
-        "company": "<exact original company>",
-        "position": "<exact original position>",
-        "start_date": "<exact original start date>",
-        "end_date": "<exact original end date>",
-        "location": "<exact original location>",
-        "highlights": [
-            "<tailored bullet 1>",
-            "<tailored bullet 2>"
-        ]
-    }
-]
-""")
+    "experience": [
+        {
+            "company": "<exact original company>",
+            "position": "<exact original position>",
+            "start_date": "<exact original start date>",
+            "end_date": "<exact original end date>",
+            "location": "<exact original location>",
+            "highlights": [
+                "<tailored bullet 1 with relevant terms highlighted using **bold** Markdown>",
+                "<tailored bullet 2 with relevant terms highlighted using **bold** Markdown>"
+            ]
+        }
+    ]
+    """)
 
     if "projects" in sections:
         
@@ -154,6 +160,9 @@ STRICT GUARDRAILS:
 ### OUTPUT FORMAT
 
 Return ONLY valid JSON.
+- Do NOT wrap the JSON in json or code fences.
+- Return only the JSON object matching the required schema.
+- Do NOT write any text before or after the JSON.
 
 {{
 {",".join(output_schema)}
@@ -170,7 +179,9 @@ You are an expert AI recruiter and job description analyst.
 Analyze the following job description and extract only the most important information needed to understand the role.
 
 STRICT OUTPUT RULES:
-- Output ONLY valid JSON.
+- Do NOT wrap the JSON in json or code fences.
+- Return only the JSON object matching the required schema.
+- Do NOT write any text before or after the JSON.
 - Do not include explanations, comments, markdown, or any text outside the JSON.
 - All outputs must be in English.
 - If the job description is written in another language, internally translate it to English before extracting information.
@@ -285,6 +296,11 @@ Your writing style:
 - Friendly but not overly enthusiastic.
 - Never sound like a recruiter, salesperson, or AI assistant.
 - Avoid corporate language and generic networking phrases.
+- Do NOT wrap the JSON in json or code fences.
+- The first character of your response must be {.
+- The last character of your response must be }.
+- Return only the JSON object matching the required schema.
+- Do NOT write any text before or after the JSON.
 """
 
     prompt = f"""
@@ -304,11 +320,12 @@ Your writing style:
 
     OUTPUT FORMAT REQUIREMENTS:
 
-    - Return ONLY valid JSON.
     - Do not include markdown code blocks.
-    - Do not include any explanation before or after the JSON.
     - The JSON must contain exactly one field: "message".
     - The value of "message" must contain the complete LinkedIn message text.
+    - Do NOT wrap the JSON in json or code fences.
+    - Return only the JSON object matching the required schema.
+    - Do NOT write any text before or after the JSON.
 
     Required JSON structure:
 

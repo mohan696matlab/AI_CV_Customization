@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Container, Row, Col, Form, Card } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
+import { apiUrl } from "../../utlis/api";
 
 function ConnectionMessage({ form, connMessage, setConnMessage }) {
   const [loading, setLoading] = useState(false); // Add loading state
@@ -12,7 +13,7 @@ function ConnectionMessage({ form, connMessage, setConnMessage }) {
       const selectedKeys = ["name", "headline", "summary", "experience"];
 
       const cvText = Object.fromEntries(
-        selectedKeys.map((key) => [key, form[key]])
+        selectedKeys.map((key) => [key, form[key]]),
       );
 
       const payload = {
@@ -23,13 +24,13 @@ function ConnectionMessage({ form, connMessage, setConnMessage }) {
         creativity: connMessage.creativity,
       };
       const response = await axios.post(
-        "http://localhost:8000/generate-connection-message",
+        apiUrl("/generate-connection-message"),
         payload,
         {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       setConnMessage((prev) => ({
@@ -42,7 +43,7 @@ function ConnectionMessage({ form, connMessage, setConnMessage }) {
       setErrorMessage(
         error.response?.data ||
           error.message ||
-          "Something went wrong while generating message"
+          "Something went wrong while generating message",
       ); // Set error message if any
 
       setTimeout(() => {
@@ -54,12 +55,12 @@ function ConnectionMessage({ form, connMessage, setConnMessage }) {
   };
 
   const prompts = {
-  prompt1:
-    "Generate a concise, professional LinkedIn connection request message. The message should be polite, personalized, and clearly state the reason for connecting. Avoid being too long, keep it under 3–4 sentences, and maintain a formal yet approachable tone.",
+    prompt1:
+      "Generate a concise, professional LinkedIn connection request message. The message should be polite, personalized, and clearly state the reason for connecting. Avoid being too long, keep it under 3–4 sentences, and maintain a formal yet approachable tone.",
 
-  prompt2:
-    "Write a friendly, engaging, and thoughtful comment for a social media post. The comment should sound natural and human-like, add value to the discussion, and avoid generic phrases. Keep it short (2–4 sentences) and adapt the tone based on the context of the post.",
-};
+    prompt2:
+      "Write a friendly, engaging, and thoughtful comment for a social media post. The comment should sound natural and human-like, add value to the discussion, and avoid generic phrases. Keep it short (2–4 sentences) and adapt the tone based on the context of the post.",
+  };
 
   const handleFieldChange = (field, value) => {
     setConnMessage((prev) => ({

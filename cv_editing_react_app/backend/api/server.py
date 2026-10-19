@@ -13,8 +13,9 @@ from services.pdf_render import html_to_pdf
 from services.ai_editing_tools import create_cover_letter, extract_job_insights, edit_cv_with_ai, generate_connection_message
 from services.database.db import add_a_job, get_all_jobs, job_to_dict, dict_to_job
 from services.load_and_reset_cv_data import load_cv_data, reset_cv_data
-from services.browser_automation_playwright.browser_automation import automated_job_search
-from services.browser_automation_playwright .save_login_cookies import linkedin_login
+# from services.browser_automation_playwright.browser_automation import automated_job_search
+# from services.browser_automation_playwright .save_login_cookies import linkedin_login
+from services.apify_job_scrapper import search_jobs
 
 
 app = FastAPI()
@@ -39,39 +40,46 @@ def reset_cv_data_api(payload: CVJSONRequest):
     return "CV data reset successfully"
 
 # ---------- API Endpoint for automated job serach on linkedin ----------
-
-
-@app.post("/setup-linkedin-credentials")
-def linkedin_login_api():
-    linkedin_login()
-
 running_processes = {}
-
 @app.post("/automated-job-search")
 def automated_job_search_api(payload: LinkedInSearchURL):
-    
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     process_id = f"{timestamp}_{uuid.uuid4()}"
 
-    os.makedirs('../../playwright_logs',exist_ok=True)
-
-    log_file = open(f"../../playwright_logs/{process_id}.log", "w")
-
     process = subprocess.Popen(
-    [
-        sys.executable,
-        "-u", # use unbuffered output
-        "-m",
-        "services.browser_automation_playwright.browser_automation",
-        "--search_url",
-        payload.search_url,
-    ],
-    stdout=log_file,
-    stderr=log_file,
-    text=True, 
-)
+        [
+            sys.executable,
+            "-u",
+            "-m",
+            "services.apify_job_scrapper",
+            "--urls",
+            payload.search_url,
+            "--keywords",
+            " ".join(payload.keywords),
+            "--location",
+            payload.location or "",
+            "--date-posted",
+            payload.date_posted or "past24Hours",
+            "--limit",
+            str(payload.limit),
+            *(
+                ["--under-10-applicants"]
+                if payload.under_10_applicants else []
+            ),
+        ],
+        text=True,
+    )
+
     running_processes[process_id] = process
+
     return {"process_id": process_id}
+
+@app.get("/check/{process_id}")
+def check_process_api(process_id: str):
+    process = running_processes.get(process_id)
+    if not process:
+        return {"error": "process not found"}
+    return {"status": "running"}
 
 @app.post("/automated-job-search/stop/{process_id}")
 def stop_job_search_api(process_id: str):
@@ -81,6 +89,7 @@ def stop_job_search_api(process_id: str):
 
     # kill entire process tree (IMPORTANT for Playwright)
     process.kill()
+    running_processes.pop(process_id, None)
 
     return {"status": "stopped"}
 

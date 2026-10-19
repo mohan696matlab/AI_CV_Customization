@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { apiUrl } from "../../utlis/api";
 
 function Jobs({
   form,
@@ -18,30 +19,29 @@ function Jobs({
   const [loading, setLoading] = useState(true);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [searchUrl, setSearchUrl] = useState("");
+  const [searchKeywords, setSearchKeywords] = useState("");
+  const [searchLocation, setSearchLocation] = useState("");
+  const [datePosted, setDatePosted] = useState("past24Hours");
+  const [underTenApplicants, setUnderTenApplicants] = useState(false);
+  const [searchLimit, setSearchLimit] = useState(2);
   const [showSidebar, setShowSidebar] = useState(false);
   const [createdAfterDate, setCreatedAfterDate] = useState(null);
 
-  const handleLinkedinCredentials = async () => {
-    try {
-      setLoadingSearch(true);
-      await axios.post("http://localhost:8000/setup-linkedin-credentials");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to submit Linkedin credentials");
-    } finally {
-      setLoadingSearch(false);
-    }
-  };
   const handleAutomatedSearch = async () => {
     try {
       setLoadingSearch(true);
 
-      const res = await axios.post(
-        "http://localhost:8000/automated-job-search",
-        {
-          search_url: searchUrl,
-        },
-      );
+      const res = await axios.post(apiUrl("/automated-job-search"), {
+        search_url: searchUrl,
+        keywords: searchKeywords
+          .split(",")
+          .map((keyword) => keyword.trim())
+          .filter(Boolean),
+        location: searchLocation.trim() || null,
+        date_posted: datePosted,
+        under_10_applicants: underTenApplicants,
+        limit: searchLimit,
+      });
 
       const processId = res.data.process_id;
       console.log("Process ID:", processId);
@@ -59,7 +59,7 @@ function Jobs({
       if (!playwrightProcessId) return;
 
       await axios.post(
-        `http://localhost:8000/automated-job-search/stop/${playwrightProcessId}`,
+        apiUrl(`/automated-job-search/stop/${playwrightProcessId}`),
       );
       setPlaywrightProcessId(null);
     } catch (error) {
@@ -71,7 +71,7 @@ function Jobs({
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/jobs");
+        const response = await axios.get(apiUrl("/jobs"));
         setJobListings(response.data);
       } catch (error) {
         console.error("Error fetching jobs:", error);
@@ -134,9 +134,9 @@ function Jobs({
       <button
         className="btn btn-lg position-fixed shadow-lg d-flex align-items-center gap-2"
         style={{
-          top: "90px",
+          top: "70px",
           right: "30px",
-          zIndex: 1030,
+          zIndex: 1040,
           backgroundColor: "#4d45c9",
           color: "white",
           border: "white solid 1px",
@@ -177,7 +177,7 @@ function Jobs({
               />
             </div>
 
-            <button
+            {/* <button
               className="btn btn-outline-primary w-100 mb-3"
               onClick={handleLinkedinCredentials}
               disabled={loadingSearch}
@@ -185,13 +185,67 @@ function Jobs({
               {loadingSearch
                 ? "Setting up..."
                 : "Set up LinkedIn Credentials (Only Once)"}
-            </button>
+            </button> */}
 
             <input
               className="form-control mb-3"
               placeholder="LinkedIn search URL"
               value={searchUrl}
               onChange={(e) => setSearchUrl(e.target.value)}
+            />
+
+            <input
+              className="form-control mb-3"
+              placeholder="Keywords, separated by commas"
+              value={searchKeywords}
+              onChange={(e) => setSearchKeywords(e.target.value)}
+            />
+
+            <input
+              className="form-control mb-3"
+              placeholder="Job location"
+              value={searchLocation}
+              onChange={(e) => setSearchLocation(e.target.value)}
+            />
+
+            <select
+              className="form-select mb-3"
+              value={datePosted}
+              onChange={(e) => setDatePosted(e.target.value)}
+            >
+              <option value="past24Hours">Past 24 hours</option>
+              <option value="pastWeek">Past week</option>
+              <option value="pastMonth">Past month</option>
+              <option value="anyTime">Any time</option>
+            </select>
+
+            <div className="form-check mb-3">
+              <input
+                id="under-ten-applicants"
+                className="form-check-input"
+                type="checkbox"
+                checked={underTenApplicants}
+                onChange={(e) => setUnderTenApplicants(e.target.checked)}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="under-ten-applicants"
+              >
+                Fewer than 10 applicants
+              </label>
+            </div>
+
+            <label className="form-label" htmlFor="search-limit">
+              Maximum jobs
+            </label>
+            <input
+              id="search-limit"
+              type="number"
+              className="form-control mb-3"
+              min="1"
+              max="100"
+              value={searchLimit}
+              onChange={(e) => setSearchLimit(Number(e.target.value))}
             />
 
             <button

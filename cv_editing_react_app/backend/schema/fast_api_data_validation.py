@@ -4,7 +4,12 @@ from datetime import datetime
 
 
 class LinkedInSearchURL(BaseModel):
-    search_url: str
+    search_url: Optional[str] = None
+    keywords: List[str] = []
+    location: Optional[str] = None
+    date_posted: Optional[str] = None
+    under_10_applicants: Optional[bool] = None
+    limit: Optional[int] = 2
 
     
 class Html2PdfRequest(BaseModel):

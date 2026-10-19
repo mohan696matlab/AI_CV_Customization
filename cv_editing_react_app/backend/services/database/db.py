@@ -1,4 +1,6 @@
 import re
+import os
+from datetime import date, datetime
 from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import Session
 try:
@@ -10,7 +12,7 @@ except ImportError:
 
 # Database functions
 
-DATABASE_URL = "sqlite:///jobs.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///jobs.db")
 engine = create_engine(DATABASE_URL)
 
 def init_db():
@@ -56,6 +58,17 @@ def get_job_id(job_link):
     job_id = int(match.group(1))
     return job_id
 
+def parse_job_posted_date(value):
+    if value in (None, ""):
+        return None
+    if isinstance(value, datetime):
+        return value
+    if isinstance(value, date):
+        return datetime.combine(value, datetime.min.time())
+    if isinstance(value, str):
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    raise TypeError("job_posted_date must be a datetime, date, ISO string, or None")
+
 def job_to_dict(job):
     return {
         "id": getattr(job, "id", None),
@@ -64,6 +77,8 @@ def job_to_dict(job):
         "company_name": getattr(job, "company_name", None),
         "job_title": getattr(job, "job_title", None),
         "job_description": getattr(job, "job_description", None),
+        "job_posted_date": getattr(job, "job_posted_date", None),
+        "applicantsCount": getattr(job, "applicantsCount", None),
 
         "technical_skills_score": getattr(job, "technical_skills_score", 0),
         "tools_frameworks_score": getattr(job, "tools_frameworks_score", 0),
@@ -79,12 +94,14 @@ def job_to_dict(job):
 
 def dict_to_job(data: dict) -> Job:
     return Job(
-        id=get_job_id(data.get("job_link")),
+        id=data.get("job_id") if data.get("job_id") else get_job_id(data.get("job_link")),
         job_link=data.get("job_link"),
         job_location=data.get("job_location"),
         company_name=data.get("company_name"),
         job_title=data.get("job_title"),
         job_description=data.get("job_description"),
+        job_posted_date=parse_job_posted_date(data.get("job_posted_date")),
+        applicantsCount=data.get("applicantsCount"),
 
         technical_skills_score=data.get("technical_skills_score", 0),
         tools_frameworks_score=data.get("tools_frameworks_score", 0),
@@ -127,3 +144,5 @@ if __name__ == "__main__":
     else:
         init_db()
         print("Database initialized.")
+
+# uv run python -m services.database.db --reset   

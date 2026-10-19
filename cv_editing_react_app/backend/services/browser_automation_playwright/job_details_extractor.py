@@ -84,8 +84,11 @@ IMPORTANT:
 - The review must be exactly one sentence.
 - Mention the biggest strengths and, if applicable, the main missing requirement.
 - Keep the review under 25 words.
-
-Return ONLY valid JSON.
+- Do NOT wrap the JSON in json or code fences.
+- The first character of your response must be {.
+- The last character of your response must be }.
+- Return only the JSON object matching the required schema.
+- Do NOT write any text before or after the JSON.
 
 Output format:
 
@@ -113,7 +116,7 @@ Candidate CV:
 """
 
 
-    llm_with_tracking = LLM_With_Tracking(temperature=0.2, task_name="cv_to_job_matching")
+    llm_with_tracking = LLM_With_Tracking(temperature=0.1, task_name="cv_to_job_matching")
     messages = [("system", system_prompt),("human", prompt)]
     output =llm_with_tracking.invoke_with_tracking(messages,pydantic_model=JobMatchAnalytics)
 
